@@ -8,6 +8,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { SESSION_STORAGE_KEYS } from 'dashboard/constants/sessionStorage';
 import SessionStorage from 'shared/helpers/sessionStorage';
 import { useBranding } from 'shared/composables/useBranding';
+import { APP_NAME } from 'dashboard/composables/useNeurotradingConfig';
 
 // components
 import SimpleDivider from '../../components/Divider/SimpleDivider.vue';
@@ -49,6 +50,7 @@ export default {
     return {
       replaceInstallationName,
       v$: useVuelidate(),
+      APP_NAME,
     };
   },
   data() {
@@ -223,9 +225,8 @@ export default {
     class="flex flex-col w-full min-h-screen py-20 bg-n-brand/5 dark:bg-n-background sm:px-6 lg:px-8"
   >
     <section class="max-w-5xl mx-auto">
-      <!-- eslint-disable-next-line vue/no-bare-strings-in-template, @intlify/vue-i18n/no-raw-text -->
       <h1 class="text-4xl font-bold text-center text-n-brand">
-        Neurotrading Chat
+        {{ APP_NAME }}
       </h1>
       <p v-if="showSignupLink" class="mt-3 text-sm text-center text-n-slate-11">
         {{ $t('COMMON.OR') }}

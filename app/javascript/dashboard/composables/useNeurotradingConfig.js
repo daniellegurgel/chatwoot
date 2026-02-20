@@ -1,5 +1,7 @@
 import { useAdmin } from 'dashboard/composables/useAdmin';
 
+export const APP_NAME = 'Neurotrading Chat';
+
 /**
  * Composable para controle de visibilidade do sidebar via config do servidor.
  * Le window.neurotradingConfig (injetado pelo Rails via config/neurotrading_sidebar.json).
