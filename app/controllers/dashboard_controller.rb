@@ -29,6 +29,7 @@ class DashboardController < ActionController::Base
   before_action :set_application_pack
   before_action :set_global_config
   before_action :set_dashboard_scripts
+  before_action :set_neurotrading_config
   around_action :switch_locale
   before_action :ensure_installation_onboarding, only: [:index]
   before_action :render_hc_if_custom_domain, only: [:index]
@@ -97,6 +98,18 @@ class DashboardController < ActionController::Base
                         else
                           'dashboard'
                         end
+  end
+
+  def set_neurotrading_config
+    config_path = Rails.root.join('config', 'neurotrading_sidebar.json')
+    @neurotrading_config = if File.exist?(config_path)
+                              JSON.parse(File.read(config_path))
+                            else
+                              {}
+                            end
+  rescue JSON::ParserError => e
+    Rails.logger.warn("neurotrading_sidebar.json parse error: #{e.message}")
+    @neurotrading_config = {}
   end
 
   def sensitive_path?

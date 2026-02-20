@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n';
 import { useSidebarKeyboardShortcuts } from './useSidebarKeyboardShortcuts';
 import { vOnClickOutside } from '@vueuse/components';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
+import { useNeurotradingConfig } from 'dashboard/composables/useNeurotradingConfig';
 import { useWindowSize, useEventListener } from '@vueuse/core';
 import { emitter } from 'shared/helpers/mitt';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
@@ -55,6 +56,9 @@ const accountId = useMapGetter('getCurrentAccountId');
 const isFeatureEnabledonAccount = useMapGetter(
   'accounts/isFeatureEnabledonAccount'
 );
+
+const { isItemVisibleForRole, isSettingsChildVisibleForRole } =
+  useNeurotradingConfig();
 
 const hasAdvancedAssignment = computed(() => {
   return isFeatureEnabledonAccount.value(
@@ -222,7 +226,7 @@ const newReportRoutes = () => [
 const reportRoutes = computed(() => newReportRoutes());
 
 const menuItems = computed(() => {
-  return [
+  const allItems = [
     {
       name: 'Inbox',
       label: t('SIDEBAR.INBOX'),
@@ -721,6 +725,20 @@ const menuItems = computed(() => {
       ],
     },
   ];
+
+  return allItems
+    .filter(item => isItemVisibleForRole(item.name))
+    .map(item => {
+      if (item.name === 'Settings' && item.children) {
+        return {
+          ...item,
+          children: item.children.filter(child =>
+            isSettingsChildVisibleForRole(child.name)
+          ),
+        };
+      }
+      return item;
+    });
 });
 </script>
 

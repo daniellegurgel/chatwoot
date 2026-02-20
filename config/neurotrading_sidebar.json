@@ -1,0 +1,8 @@
+{
+  "sidebar_visibility": {
+    "agent": {
+      "visible_items": ["Inbox", "Conversation"],
+      "visible_settings_children": []
+    }
+  }
+}
