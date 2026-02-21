@@ -69,6 +69,7 @@ import {
 import { matchesFilters } from '../store/modules/conversations/helpers/filterHelpers';
 import { CONVERSATION_EVENTS } from '../helper/AnalyticsHelper/events';
 import { ASSIGNEE_TYPE_TAB_PERMISSIONS } from 'dashboard/constants/permissions.js';
+import { useNeurotradingConfig } from 'dashboard/composables/useNeurotradingConfig';
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
@@ -84,6 +85,7 @@ const props = defineProps({
 
 const emit = defineEmits(['conversationLoad']);
 const { uiSettings } = useUISettings();
+const { isTabVisibleForRole } = useNeurotradingConfig();
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
@@ -209,11 +211,13 @@ const assigneeTabItems = computed(() => {
     ASSIGNEE_TYPE_TAB_PERMISSIONS,
     userPermissions.value,
     item => item.permissions
-  ).map(({ key, count: countKey }) => ({
-    key,
-    name: t(`CHAT_LIST.ASSIGNEE_TYPE_TABS.${key}`),
-    count: conversationStats.value[countKey] || 0,
-  }));
+  )
+    .filter(({ key }) => isTabVisibleForRole(key))
+    .map(({ key, count: countKey }) => ({
+      key,
+      name: t(`CHAT_LIST.ASSIGNEE_TYPE_TABS.${key}`),
+      count: conversationStats.value[countKey] || 0,
+    }));
 });
 
 const showAssigneeInConversationCard = computed(() => {

@@ -77,11 +77,23 @@ export const applyRoleFilter = (
   permissions,
   currentUserId
 ) => {
-  // the role === "agent" check is typically not correct on it's own
-  // the backend handles this by checking the custom_role_id at the user model
-  // here however, the `getUserRole` returns "custom_role" if the id is present,
-  // so we can check the role === "agent" directly
-  if (['administrator', 'agent'].includes(role)) {
+  if (role === 'administrator') {
+    return true;
+  }
+
+  // Neurotrading: agentes filtrados pela config de conversation_visibility
+  if (role === 'agent') {
+    const ntConfig = window.neurotradingConfig || {};
+    const convVisibility = ntConfig.conversation_visibility || {};
+    const agentConfig = convVisibility.agent;
+    if (agentConfig && agentConfig.visible_tabs) {
+      const onlyMine =
+        agentConfig.visible_tabs.length === 1 &&
+        agentConfig.visible_tabs[0] === 'me';
+      if (onlyMine) {
+        return conversation.meta.assignee?.id === currentUserId;
+      }
+    }
     return true;
   }
 

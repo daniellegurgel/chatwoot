@@ -12,6 +12,7 @@ export function useNeurotradingConfig() {
   const { isAdmin } = useAdmin();
   const config = window.neurotradingConfig || {};
   const sidebarVisibility = config.sidebar_visibility || {};
+  const conversationVisibility = config.conversation_visibility || {};
 
   const isItemVisibleForRole = itemName => {
     if (isAdmin.value) return true;
@@ -40,5 +41,18 @@ export function useNeurotradingConfig() {
     return agentConfig.visible_settings_children.includes(childName);
   };
 
-  return { isItemVisibleForRole, isSettingsChildVisibleForRole };
+  const isTabVisibleForRole = tabKey => {
+    if (isAdmin.value) return true;
+
+    const agentConfig = conversationVisibility.agent;
+    if (!agentConfig || !agentConfig.visible_tabs) return true;
+
+    return agentConfig.visible_tabs.includes(tabKey);
+  };
+
+  return {
+    isItemVisibleForRole,
+    isSettingsChildVisibleForRole,
+    isTabVisibleForRole,
+  };
 }
